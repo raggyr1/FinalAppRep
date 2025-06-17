@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component name="MainScene" extends="Scene">
+   <script type="text/brightscript" uri="pkg:/components/mainscene.brs"/>
+   <script type="text/brightscript" uri="pkg:/components/vstest.brs"/>
+   
+   <children>
+       <!-- Background Image -->
+       <Poster
+           id="backgroundImage"
+           uri="pkg:/images/rokuimg.png"
+           height="1080"
+           width="1300"
+           translation="[0,0]" />
+
+       <!-- Title Label -->
+       <Label
+           id="titleLabel"
+           text="Quiz App"
+           width="400" height="50"
+           translation="[570,100]" />
+
+       <!-- Start Button -->
+       <Button
+           id="startButton"
+           text="Start Quiz"
+           translation="[500,200]"
+           focusable="true" />
+
+       <!-- Quiz UI Group -->
+       <Group id="group" visible="false" translation="[50,250]">
+           <!-- Question Label -->
+           <Label
+               id="questionLabel"
+               text=""
+               width="1200" height="100"
+               translation="[0,0]"
+               font="font:MediumBoldSystemFont" />
+
+           <!-- Timer Label -->
+           <Label
+               id="timerLabel"
+               text="Time: 30"
+               width="200" height="50"
+               translation="[1000,0]"
+               font="font:MediumBoldSystemFont"
+               color="0xFFFFFFFF" />
+
+           <!-- Feedback Label - Positioned under the timer -->
+           <Label
+               id="feedbackLabel"
+               text=""
+               width="600" height="50"
+               translation="[700,60]"
+               font="font:MediumSystemFont"
+               color="0x00FF00FF" />
+
+           <!-- All Buttons in LayoutGroup -->
+           <LayoutGroup
+               translation="[0,100]"
+               layoutDirection="vert"
+               itemSpacings="[10]">
+               
+               <Button id="btnA" text="A. " minWidth="600" focusable="true" />
+               <Button id="btnB" text="B. " minWidth="600" focusable="true" />
+               <Button id="btnC" text="C. " minWidth="600" focusable="true" />
+               <Button id="btnD" text="D. " minWidth="600" focusable="true" />
+               <Button id="next" text="Skip / Next Question" minWidth="600" focusable="true" />
+           </LayoutGroup>
+
+           <!-- Timer Node -->
+           <Timer
+               id="countdownTimer"
+               repeat="true"
+               duration="1" />
+       </Group>
+   </children>
+</component>
