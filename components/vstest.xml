@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="vstest" extends="Scene">
+    <script type="text/brightscript" uri="pkg:/components/vstest.brs"/>
+    <children>
+        <label id="instructionLabel" text="Hint: Press the asterisk and refresh to reset data" width="600" height="50" translation="[600,50]"/>
+        <label id="timerLabel" text="Time: 10" width="400" height="50" translation="[100,50]"/>
+        <Timer id="countdownTimer" duration="1.0" repeat="true"/>
+        <Label id="questionLabel" text=" " translation="[100,200]"/>
+        <Label id="scoreLabel" text="Score: " translation="[600,100]"/>
+        <ButtonGroup id="group" translation="[100,250]">
+            <Button id="btnA" text="A!" />
+            <Button id="btnB" text="B!"/>
+            <Button id="btnC" text="C!"/>
+            <Button id="btnD" text="D!"/>
+            <Button id="next" text="Next" translation="[150,500]"/>
+            <Button id="replay" text ="Replay" translation="[600,600]"/>
+        </ButtonGroup>
+        <Label id="feedbacklabel" text=" " translation="[100,600]"/>
+    </children>
+</component>

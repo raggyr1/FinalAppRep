@@ -1,0 +1,20 @@
+{
+    "questions": [
+      "Who founded Roku?",
+      "What year was the first Roku device released?",
+      "Which company did Roku partner with for its first streaming device?",
+      "What does the word \"Roku\" mean in Japanese?"
+    ],
+    "answers": [
+      ["Reed Hastings", "Anthony Wood", "Jeff Bezos", "Steve Jobs"],                
+      ["2010", "2008", "2015", "2005"],                
+      ["Amazon", "Hulu", "Netflix", "Disney+"], 
+      ["Three", "Four", "Five", "Six"]
+    ],
+    "checkan": [
+      ["n", "y", "n", "n"],               
+      ["n", "y", "n", "n"],                
+      ["n", "n", "y", "n"],                
+      ["n", "n", "n", "y"]           
+    ]
+  }
