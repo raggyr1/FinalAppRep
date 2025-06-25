@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Think Fast Controller</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #C4EFF7;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #449EBC;
+            font-family: 'Trebuchet MS', sans-serif;
+        }
+        
+        .container {
+            max-width: 400px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            color: #F07F0D;
+        }
+        
+        .game-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background: #F6AD19;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .answer-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .answer-btn {
+            background: linear-gradient(45deg, #4834d4, #686de0);
+            padding: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .answer-btn.a { background: #073F5C; }
+        .answer-btn.b { background: #073F5C; }
+        .answer-btn.c { background: #073F5C; }
+        .answer-btn.d { background: #073F5C; }
+        
+        .control-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            background: #073F5C;
+            padding: 12px;
+            font-size: 14px;
+        }
+        
+        .control-btn.reset {
+            background: #073F5C;
+        }
+        
+        .control-btn.leave {
+            background: #073F5C;
+
+        }
+        
+        .status {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+        }
+        
+        .connected { background: rgba(39, 174, 96, 0.3); }
+        .disconnected { background: rgba(231, 76, 60, 0.3); }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h1>Think Fast!!</h1>
+        
+        <div class="input-group">
+            <label for="gameId">Game ID:</label>
+            <input type="text" id="gameId" placeholder="Enter game ID">
+        </div>
+        
+        <div class="input-group">
+            <label for="playerId">Player Name:</label>
+            <input type="text" id="playerId" placeholder="Enter your name">
+        </div>
+        
+        <button id="joinBtn" onclick="joinGame()">Join Game</button>
+        <button id="leaveBtn" class="hidden" onclick="leaveGame()">Leave Game</button>
+        
+        <div id="status" class="status disconnected">Not Connected</div>
+        
+        <div class="game-info">
+            <div>Game: <span id="currentGame">-</span></div>
+            <div>Players: <span id="playerCount">0</span></div>
+            <div>Status: <span id="gameStatus">-</span></div>
+        </div>
+        
+        <div id="gameControls" class="hidden">
+            <div class="answer-buttons">
+                <button class="answer-btn a" onclick="sendAnswer('A')">A</button>
+                <button class="answer-btn b" onclick="sendAnswer('B')">B</button>
+                <button class="answer-btn c" onclick="sendAnswer('C')">C</button>
+                <button class="answer-btn d" onclick="sendAnswer('D')">D</button>
+            </div>
+            
+            <div class="control-buttons">
+                <button class="control-btn" onclick="sendControl('next')">Next Question</button>
+                <button class="control-btn" onclick="sendControl('start')">Start Game</button>
+                <button class="control-btn reset" onclick="performReset()">Reset Game</button>
+                <button class="control-btn leave" onclick="clearGameData()">Clear Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-database-compat.min.js"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5wgZ9VTH9-wnXjJ7PuLd_UtUD1pFN2xQ",
+            authDomain: "multiplayerroku.firebaseapp.com",
+            databaseURL: "https://multiplayerroku-default-rtdb.firebaseio.com/",
+            projectId: "multiplayerroku",
+            storageBucket: "multiplayerroku.firebasestorage.app",
+            messagingSenderId: "59116075128",
+            appId: "1:59116075128:web:e0ff73a4eaedc7d19a158d",
+            measurementId: "G-YN48PD94BP"
+        };
+        
+        // Initialize Firebase
+        let app, database;
+        try {
+            app = firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+        } catch (error) {
+            console.error("Firebase initialization failed:", error.message);
+        }
+        
+        // Global variables
+        let currentGameId = null;
+        let currentPlayerId = null;
+        let gameRef = null;
+        let isConnected = false;
+        
+        // Join game function
+        function joinGame() {
+            const gameId = document.getElementById('gameId').value.trim();
+            const playerId = document.getElementById('playerId').value.trim();
+            
+            if (!gameId || !playerId) {
+                alert('Please enter both Game ID and Player Name');
+                return;
+            }
+            
+            if (!database) {
+                alert('Firebase not initialized. Check your API key.');
+                return;
+            }
+            
+            currentGameId = gameId;
+            currentPlayerId = playerId;
+            
+            // Reference to the specific game
+            gameRef = database.ref(`games/${gameId}`);
+            
+            // Add player to the game
+            gameRef.child('players').child(playerId).set({
+                name: playerId,
+                connected: true,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                // Initialize game state if it doesn't exist
+                gameRef.child('state').once('value', (snapshot) => {
+                    if (!snapshot.exists()) {
+                        gameRef.child('state').set({
+                            status: 'waiting',
+                            currentQuestion: 0
+                        });
+                    }
+                });
+                
+                // Listen for game state changes
+                gameRef.on('value', (snapshot) => {
+                    const gameData = snapshot.val();
+                    if (gameData) {
+                        updateGameInfo(gameData);
+                    }
+                });
+                
+                // Update UI
+                updateConnectionStatus(true);
+                toggleGameControls(true);
+                
+            }).catch((error) => {
+                alert('Error joining game: ' + error.message);
+            });
+        }
+        
+        // Leave game function
+        function leaveGame() {
+            if (!gameRef || !currentPlayerId) {
+                return;
+            }
+            
+            // Remove player from game
+            gameRef.child('players').child(currentPlayerId).remove().then(() => {
+                // Check if no players left, then clean up
+                gameRef.child('players').once('value', (snapshot) => {
+                    if (!snapshot.exists()) {
+                        gameRef.remove();
+                    }
+                });
+                
+                // Reset local state
+                resetLocalState();
+                
+            }).catch((error) => {
+                console.error("Error leaving game:", error.message);
+            });
+        }
+        
+        // Send answer function
+        function sendAnswer(answer) {
+            if (!gameRef || !currentPlayerId) {
+                alert('Please join a game first');
+                return;
+            }
+            
+            // Send answer to Firebase
+            gameRef.child('inputs').push({
+                type: 'answer',
+                playerId: currentPlayerId,
+                data: answer,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                // Visual feedback
+                const btn = event.target;
+                const originalStyle = btn.style.background;
+                btn.style.background = 'linear-gradient(45deg, #27ae60, #2ecc71)';
+                setTimeout(() => {
+                    btn.style.background = originalStyle;
+                }, 500);
+                
+            }).catch((error) => {
+                console.error("Error sending answer:", error.message);
+            });
+        }
+        
+        // Send control function
+        function sendControl(action) {
+            if (!gameRef || !currentPlayerId) {
+                alert('Please join a game first');
+                return;
+            }
+            
+            // Send control command to Firebase
+            gameRef.child('inputs').push({
+                type: 'control',
+                playerId: currentPlayerId,
+                data: action,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                // Control sent successfully
+            }).catch((error) => {
+                console.error("Error sending control:", error.message);
+            });
+        }
+        
+        // Reset game function
+        function performReset() {
+            if (!gameRef || !currentGameId) {
+                alert('No game to reset');
+                return;
+            }   
+            
+            if (confirm('Are you sure you want to reset the game?')) {
+                // Clear inputs and reset state
+                Promise.all([
+                    gameRef.child('inputs').remove(),
+                    gameRef.child('state').set({
+                        status: 'waiting',
+                        currentQuestion: 0
+                    })
+                ]).then(() => {
+                    alert('Game has been reset!');
+                }).catch((error) => {
+                    alert('Error resetting game');
+                });
+            }
+        }
+        
+        // Clear all game data
+        function clearGameData() {
+            if (!gameRef || !currentGameId) {
+                alert('No game to clear');
+                return;
+            }
+            
+            if (confirm('This will completely delete the game and all its data.')) {
+                gameRef.remove().then(() => {
+                    alert('Game data cleared!');
+                    resetLocalState();
+                }).catch((error) => {
+                    alert('Error clearing game data');
+                });
+            }
+        }
+        
+        // Update game info display
+        function updateGameInfo(gameData) {
+            try {
+                // Update player count
+                if (gameData.players) {
+                    const playerCount = Object.keys(gameData.players).length;
+                    document.getElementById('playerCount').textContent = playerCount;
+                }
+                
+                // Update game status
+                if (gameData.state && gameData.state.status) {
+                    document.getElementById('gameStatus').textContent = gameData.state.status;
+                }
+                
+            } catch (error) {
+                console.error("Error updating game info:", error.message);
+            }
+        }
+        
+        // Update connection status
+        function updateConnectionStatus(connected) {
+            const statusEl = document.getElementById('status');
+            isConnected = connected;
+            
+            if (connected) {
+                statusEl.textContent = `Connected to Game: ${currentGameId}`;
+                statusEl.className = 'status connected';
+                document.getElementById('currentGame').textContent = currentGameId;
+            } else {
+                statusEl.textContent = 'Not Connected';
+                statusEl.className = 'status disconnected';
+                document.getElementById('currentGame').textContent = '-';
+            }
+        }
+        
+        // Toggle game controls visibility
+        function toggleGameControls(show) {
+            const controls = document.getElementById('gameControls');
+            const joinBtn = document.getElementById('joinBtn');
+            const leaveBtn = document.getElementById('leaveBtn');
+            
+            if (show) {
+                controls.classList.remove('hidden');
+                joinBtn.classList.add('hidden');
+                leaveBtn.classList.remove('hidden');
+            } else {
+                controls.classList.add('hidden');
+                joinBtn.classList.remove('hidden');
+                leaveBtn.classList.add('hidden');
+            }
+        }
+        
+        // Reset local state
+        function resetLocalState() {
+            // Stop listening to Firebase
+            if (gameRef) {
+                gameRef.off();
+            }
+            
+            // Reset variables
+            currentGameId = null;
+            currentPlayerId = null;
+            gameRef = null;
+            
+            // Reset UI
+            document.getElementById('gameId').value = '';
+            document.getElementById('playerId').value = '';
+            document.getElementById('playerCount').textContent = '0';
+            document.getElementById('gameStatus').textContent = '-';
+            
+            updateConnectionStatus(false);
+            toggleGameControls(false);
+        }
+        
+        // Handle page unload
+        window.addEventListener('beforeunload', () => {
+            if (gameRef && currentPlayerId) {
+                // Mark player as disconnected
+                gameRef.child('players').child(currentPlayerId).child('connected').set(false);
+            }
+        });
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add enter key support for inputs
+            document.getElementById('gameId').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') document.getElementById('playerId').focus();
+            });
+            
+            document.getElementById('playerId').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') joinGame();
+            });
+        });
+    </script>
+</body>
+</html>
